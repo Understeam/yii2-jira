@@ -7,10 +7,20 @@
       "issues": "https://github.com/Understeam/yii2-jira/issues",
       "source": "https://github.com/Understeam/yii2-jira"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.0",
         "understeam/yii2-httpclient": ">=0.2"
+    },
+    "require-dev": {
+        "codeception/codeception": "2.1.2",
+        "codeception/verify": "0.2.7",
+        "codeception/specify": "0.4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "understeam\\httpclient\\": ""
+        }
     }
 }

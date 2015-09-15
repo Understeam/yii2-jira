@@ -1,0 +1,16 @@
+{
+    "name": "understeam/yii2-jira",
+    "description": "Jira REST API integration for Yii2",
+    "homepage": "http://github.com/Understeam/yii2-jira",
+    "license": "GPLv3",
+    "support": {
+      "issues": "https://github.com/Understeam/yii2-jira/issues",
+      "source": "https://github.com/Understeam/yii2-jira"
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yi2": ">=2.0.0",
+        "understeam/yii2-httpclient": ">=0.2"
+    }
+}

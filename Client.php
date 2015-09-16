@@ -7,7 +7,9 @@ use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;
 use Yii;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 
 /**
  * Client component for Jira REST API
@@ -27,6 +29,8 @@ class Client extends Component
     public $password;
 
     public $httpClientId = 'httpclient';
+
+    private $_metaData;
 
     public function getApiEndpointUrl()
     {
@@ -62,6 +66,21 @@ class Client extends Component
         return $this->request('PUT', $path, $body);
     }
 
+    public function search($jql)
+    {
+        return $this->post('search', ['jql' => $jql]);
+    }
+
+    public function getProject($key)
+    {
+        $data = $this->get("project/{$key}");
+        if (!isset($data['id'])) {
+            return null;
+        } else {
+            return Project::populate($this, $data);
+        }
+    }
+
     public function request($method, $path, $body = [])
     {
         $url = $this->getUrlOfPath($path);
@@ -71,13 +90,14 @@ class Client extends Component
                 $authString = base64_encode($this->username . ':' . $this->password);
                 $request->addHeader("Authorization", "Basic " . $authString);
                 $request->addHeader("Accept", "application/json");
+                $request->addHeader("Content-Type", "application/json");
                 if (!empty($body)) {
-                    $body = new BufferStream();
+                    $stream = new BufferStream();
                     if (is_array($body)) {
                         $body = Json::encode($body);
                     }
-                    $body->write($body);
-                    $request->setBody($body);
+                    $stream->write($body);
+                    $request->setBody($stream);
                 }
             });
             if (is_string($result)) {

@@ -10,10 +10,6 @@ use yii\base\Model;
  */
 class User extends Model
 {
-    /**
-     * @var int
-     */
-    public $id;
 
     /**
      * @var string
@@ -30,4 +26,19 @@ class User extends Model
      */
     public $email;
 
+    /**
+     * @param array $data
+     * @return User
+     */
+    public static function populateOne($data)
+    {
+        if (!is_array($data) || !isset($data['name'])) {
+            return null;
+        }
+        $user = new self;
+        $user->name = $data['name'];
+        $user->displayName = $data['displayName'];
+        $user->email = $data['emailAddress'];
+        return $user;
+    }
 }

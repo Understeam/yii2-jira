@@ -1,6 +1,5 @@
 <?php
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;
 use yii\helpers\Json;

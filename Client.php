@@ -10,7 +10,7 @@ use yii\base\Component;
 use yii\helpers\Json;
 
 /**
- * Client component for JIRA REST API
+ * Client component for Jira REST API
  *
  * Api docs: https://docs.atlassian.com/jira/REST/latest/
  *
@@ -27,7 +27,6 @@ class Client extends Component
     public $password;
 
     public $httpClientId = 'httpclient';
-
 
     public function getApiEndpointUrl()
     {

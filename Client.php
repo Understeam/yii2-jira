@@ -1,4 +1,7 @@
 <?php
+
+namespace understeam\jira;
+
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;

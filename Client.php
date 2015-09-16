@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;
 use Yii;
+use yii\base\Component;
 use yii\helpers\Json;
 
 /**
@@ -17,7 +18,7 @@ use yii\helpers\Json;
  *
  * @author Anatoly Rugalev <arugalev@enaza.ru>
  */
-class Client extends \yii\base\Component
+class Client extends Component
 {
 
     public $jiraUrl;

@@ -6,7 +6,6 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;
 use Yii;
-use yii\base\InvalidParamException;
 use yii\helpers\Json;
 
 /**

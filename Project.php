@@ -32,7 +32,7 @@ class Project extends Model
     public $name;
 
     /**
-     * @var array
+     * @var IssueType[]
      */
     public $issueTypes;
 
@@ -59,14 +59,16 @@ class Project extends Model
         $project->id = (int)$data['id'];
         $project->key = $data['key'];
         $project->name = $data['name'];
-        $project->issueTypes = ArrayHelper::index($data['issueTypes'], 'name');
+        $project->issueTypes = IssueType::populateAll($project, $data['issueTypes']);
         $project->components = ArrayHelper::index($data['components'], 'name');
+
         return $project;
     }
 
     public function getMetaData($issueTypeName)
     {
-        $data = $this->client->get('issue/createmeta', ['projectKeys' => $this->key, 'expand' => 'projects.issuetypes.fields']);
+        $data = $this->client->get('issue/createmeta',
+            ['projectKeys' => $this->key, 'expand' => 'projects.issuetypes.fields']);
         if (isset($data['projects'][0])) {
             $data = ArrayHelper::index($data['projects'][0]['issuetypes'], 'name');
         } else {
@@ -87,22 +89,65 @@ class Project extends Model
         return $this->_client;
     }
 
-    public function createIssue($issueTypeName)
+    /**
+     * @param string|IssueType $issueType
+     * @return Issue
+     */
+    public function createIssue($issueType)
     {
-        if (!isset($this->issueTypes[$issueTypeName])) {
-            throw new InvalidParamException("Issue type \"{$issueTypeName}\" does not exist in project \"{$this->name}\"");
+        if (is_string($issueType)) {
+            $issueType = $this->getIssueType($issueType);
         }
-        return Issue::create($this, $this->issueTypes[$issueTypeName]);
+
+        return Issue::create($this, $issueType);
+    }
+
+    public function search($jql) {
+        $jql = "project = " . $this->key . " AND " . $jql;
+        $result = $this->client->post('search', ['jql' => $jql]);
+        if (isset($result['errorMessages'])) {
+            throw new Exception("Jira search error: " . $result['errorMessages'][0]);
+        }
+        return $result;
+    }
+
+    public function findIssue($jql)
+    {
+        $result = $this->search($jql);
+        if (!isset($result['total']) || $result['total'] == 0) {
+            return null;
+        }
+        return Issue::populate($this, $result['issues'][0]);
+    }
+
+    public function findIssues($jql)
+    {
+        $result = $this->search($jql);
+        if (!isset($result['total']) || $result['total'] == 0) {
+            return [];
+        }
+        return Issue::populateAll($this, $result['issues']);
     }
 
     public function getIssue($key)
     {
         $data = $this->client->get('issue/' . $key);
         if (isset($data['id'])) {
-            $issue = Issue::populateOne($this, $data);
+            $issue = Issue::populate($this, $data);
+
             return $issue;
         }
+
         return null;
+    }
+
+    public function getIssueType($name)
+    {
+        if (!isset($this->issueTypes[$name])) {
+            throw new InvalidParamException("Issue type \"{$name}\" does not exist in project \"{$this->name}\"");
+        }
+
+        return $this->issueTypes[$name];
     }
 
 }

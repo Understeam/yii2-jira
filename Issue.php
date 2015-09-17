@@ -52,7 +52,7 @@ class Issue extends Model
     public $status;
 
     /**
-     * @var array
+     * @var IssueType
      */
     public $issueType;
 
@@ -69,12 +69,13 @@ class Issue extends Model
     /** @var array */
     public $customFields = [];
 
-    public static function create(Project $project, array $issueType)
+    public static function create(Project $project, IssueType $issueType)
     {
         $issue = new self([
             'issueType' => $issueType,
         ]);
         $issue->_project = $project;
+
         return $issue;
     }
 
@@ -85,13 +86,14 @@ class Issue extends Model
      */
     public static function populateAll(Project $project, $data)
     {
-        if (empty($data['issues'])) {
+        if (empty($data)) {
             return [];
         }
         $issues = [];
-        foreach ($data['issues'] as $issueData) {
-            $issues[] = self::populateOne($project, $issueData);
+        foreach ($data as $issueData) {
+            $issues[] = self::populate($project, $issueData);
         }
+
         return $issues;
     }
 
@@ -100,7 +102,7 @@ class Issue extends Model
      * @param array $data
      * @return Issue
      */
-    public static function populateOne(Project $project, $data)
+    public static function populate(Project $project, $data)
     {
         if (!is_array($data) || !isset($data['id'])) {
             return null;
@@ -111,20 +113,16 @@ class Issue extends Model
         $issue->_key = $data['key'];
         $issue->summary = $data['fields']['summary'];
         $issue->description = $data['fields']['description'];
-        $issue->issueType = $data['fields']['issuetype'];
+        $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
         $issue->components = ArrayHelper::index($data['fields']['components'], 'name');
         $issue->created = strtotime($data['fields']['created']);
         $issue->customFields = [];
-        $fields = $project->getMetaData($issue->issueType['name'])['fields'];
-        foreach ($data['fields'] as $name => $value) {
-            if (!isset($fields[$name])) {
-                continue;
-            }
-            if (strpos($name, "customfield_") === 0) {
-                $fieldName = $fields[$name]['name'];
-                $issue->customFields[$fieldName] = $value;
+        foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
+            if (isset($data['fields']['customfield_' . $id])) {
+                $issue->customFields[$name] = $data['fields']['customfield_' . $id];
             }
         }
+
         return $issue;
     }
 
@@ -158,6 +156,7 @@ class Issue extends Model
         if ($this->key) {
             $this->setAttributes($this->project->getIssue($this->key)->attributes, false);
         }
+
         return false;
     }
 
@@ -166,9 +165,11 @@ class Issue extends Model
         $result = $this->project->client->post('issue', $this->serialize());
         if (!empty($result['errors'])) {
             $this->addErrors($result['errors']);
+
             return false;
         }
         $this->refresh();
+
         return true;
     }
 
@@ -177,9 +178,11 @@ class Issue extends Model
         $result = $this->project->client->put('issue/' . $this->key, $this->serialize());
         if (isset($result['errors'])) {
             $this->addErrors($result['errors']);
+
             return false;
         }
         $this->refresh();
+
         return true;
     }
 
@@ -198,11 +201,9 @@ class Issue extends Model
         if ($this->summary) {
             $fields['summary'] = $this->summary;
         }
-        $fields = $this->project->getMetaData($this->issueType['name'])['fields'];
-        $fieldsMap = ArrayHelper::map($fields, 'name', 'id');
-        foreach ($this->customFields as $name => $value) {
-            if (isset($fieldsMap[$name])) {
-                $fields["customfield_" . $fieldsMap[$name]] = $value;
+        foreach ($this->issueType->getCustomFieldsMap() as $name => $id) {
+            if(isset($this->customFields[$name])) {
+                $fields['customfield_' . $id] = $this->customFields[$name];
             }
         }
         return [

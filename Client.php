@@ -48,6 +48,7 @@ class Client extends Component
             $params = http_build_query($params);
             $path .= '?' . $params;
         }
+
         return $this->request('GET', $path);
     }
 
@@ -64,11 +65,6 @@ class Client extends Component
     public function put($path, $body = [])
     {
         return $this->request('PUT', $path, $body);
-    }
-
-    public function search($jql)
-    {
-        return $this->post('search', ['jql' => $jql]);
     }
 
     public function getProject($key)
@@ -107,6 +103,7 @@ class Client extends Component
             $string = $e->getResponse()->getBody()->__toString();
             $result = Json::decode($string);
         }
+
         return $result;
     }
 

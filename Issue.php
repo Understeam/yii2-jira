@@ -193,7 +193,7 @@ class Issue extends Model
                 'id' => $this->project->id,
             ],
             'issuetype' => $this->issueType,
-            'components' => is_array($this->components) ? $this->components : [],
+            'components' => is_array($this->components) ? array_values($this->components) : [],
         ];
         if ($this->description) {
             $fields['description'] = $this->description;

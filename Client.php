@@ -116,4 +116,11 @@ class Client extends Component
         return Yii::$app->get($this->httpClientId);
     }
 
+    public static function escapeValue($value) {
+        return strtr($value, [
+            '/' => '\u002f',
+            '.' => '\u002e',
+        ]);
+    }
+
 }

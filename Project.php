@@ -102,12 +102,14 @@ class Project extends Model
         return Issue::create($this, $issueType);
     }
 
-    public function search($jql) {
+    public function search($jql)
+    {
         $jql = "project = " . $this->key . " AND " . $jql;
         $result = $this->client->post('search', ['jql' => $jql]);
         if (isset($result['errorMessages'])) {
             throw new Exception("Jira search error: " . $result['errorMessages'][0]);
         }
+
         return $result;
     }
 
@@ -117,6 +119,7 @@ class Project extends Model
         if (!isset($result['total']) || $result['total'] == 0) {
             return null;
         }
+
         return Issue::populate($this, $result['issues'][0]);
     }
 
@@ -126,7 +129,14 @@ class Project extends Model
         if (!isset($result['total']) || $result['total'] == 0) {
             return [];
         }
+
         return Issue::populateAll($this, $result['issues']);
+    }
+
+    public function findIssueByCustomField($name, $value, $operator = "~")
+    {
+        $jql = "'{$name}' {$operator} '" . Client::escapeValue($value) . "'";
+        return $this->findIssue($jql);
     }
 
     public function getIssue($key)
@@ -141,6 +151,10 @@ class Project extends Model
         return null;
     }
 
+    /**
+     * @param $name
+     * @return IssueType
+     */
     public function getIssueType($name)
     {
         if (!isset($this->issueTypes[$name])) {

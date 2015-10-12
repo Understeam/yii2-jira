@@ -7,9 +7,7 @@ use GuzzleHttp\Stream\BufferStream;
 use understeam\httpclient\Event;
 use Yii;
 use yii\base\Component;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
 
 /**
  * Client component for Jira REST API
@@ -29,8 +27,6 @@ class Client extends Component
     public $password;
 
     public $httpClientId = 'httpclient';
-
-    private $_metaData;
 
     public function getApiEndpointUrl()
     {

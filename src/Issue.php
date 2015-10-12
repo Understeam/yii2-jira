@@ -4,7 +4,6 @@ namespace understeam\jira;
 
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 
 /**
  * Issue representation model

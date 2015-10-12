@@ -8,7 +8,6 @@ namespace understeam\jira;
 
 use Yii;
 use yii\base\Model;
-use yii\helpers\VarDumper;
 
 /**
  * IssueType representation class

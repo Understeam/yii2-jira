@@ -5,7 +5,6 @@ namespace understeam\jira;
 use yii\base\InvalidParamException;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 
 /**
  * Project representation model

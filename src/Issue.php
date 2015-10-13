@@ -201,12 +201,25 @@ class Issue extends Model
             $fields['summary'] = $this->summary;
         }
         foreach ($this->issueType->getCustomFieldsMap() as $name => $id) {
-            if(isset($this->customFields[$name])) {
+            if (isset($this->customFields[$name])) {
                 $fields['customfield_' . $id] = $this->customFields[$name];
             }
         }
         return [
             'fields' => $fields,
         ];
+    }
+
+    public function createComment($text = null)
+    {
+        $comment = new Comment([
+            'text' => $text,
+        ]);
+        return $comment;
+    }
+
+    public function findComments()
+    {
+
     }
 }

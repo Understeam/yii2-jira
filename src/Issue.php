@@ -150,10 +150,13 @@ class Issue extends Model
         }
     }
 
-    public function refresh()
+    public function refresh($data = null)
     {
+        if (!is_array($data)) {
+            $data = $this->project->getIssue($this->key)->attributes;
+        }
         if ($this->key) {
-            $this->setAttributes($this->project->getIssue($this->key)->attributes, false);
+            $this->setAttributes($data, false);
         }
 
         return false;
@@ -167,7 +170,7 @@ class Issue extends Model
 
             return false;
         }
-        $this->refresh();
+        $this->refresh($result);
 
         return true;
     }
@@ -180,7 +183,7 @@ class Issue extends Model
 
             return false;
         }
-        $this->refresh();
+        $this->refresh($result);
 
         return true;
     }
@@ -205,21 +208,49 @@ class Issue extends Model
                 $fields['customfield_' . $id] = $this->customFields[$name];
             }
         }
+
         return [
             'fields' => $fields,
         ];
     }
 
-    public function createComment($text = null)
+    /**
+     * @return Comment
+     */
+    public function createComment()
     {
-        $comment = new Comment([
-            'text' => $text,
-        ]);
+        $comment = Comment::create($this);
+
         return $comment;
     }
 
-    public function findComments()
+    /**
+     * @param $id
+     * @return null|Comment
+     */
+    public function getComment($id)
     {
+        $data = $this->project->client->get("issue/{$this->key}/comment/{$id}");
+        if (isset($data['id'])) {
+            return Comment::populate($this, $data);
+        } else {
+            return null;
+        }
+    }
 
+    /**
+     * @return array|Comment[]
+     */
+    public function getComments()
+    {
+        if (!$this->key) {
+            return [];
+        }
+        $data = $this->project->client->get("issue/{$this->key}/comment?expand");
+        if (count($data)) {
+            return Comment::populateAll($this, $data);
+        } else {
+            return [];
+        }
     }
 }

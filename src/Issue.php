@@ -110,7 +110,8 @@ class Issue extends Model
         $issue->_project = $project;
         $issue->id = (int)$data['id'];
         $issue->_key = $data['key'];
-        $issue->summary = $data['fields']['summary'];
+	    $issue->summary = $data['fields']['summary'];
+	    $issue->status = Status::get($data['fields']['status']);
         $issue->description = $data['fields']['description'];
         $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
         $issue->components = ArrayHelper::index($data['fields']['components'], 'name');

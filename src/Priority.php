@@ -10,17 +10,15 @@ use Yii;
 use yii\base\Model;
 
 /**
- * Status representation class
- *
- * @property StatusCategory $statusCategory
+ * Priority representation class
  *
  * @author Bennet Klarhölter
  * @link https://github.com/boehsermoe
  */
-class Status extends Model
+class Priority extends Model
 {
 
-	private static $statuses = array();
+	private static $priorities = array();
 
     /**
      * @var int
@@ -35,11 +33,6 @@ class Status extends Model
     /**
      * @var string
      */
-    public $description;
-
-    /**
-     * @var string
-     */
     public $iconUrl;
 
 	/**
@@ -48,36 +41,24 @@ class Status extends Model
 	 */
 	public $self;
 
-	/**
-	 * @var string
-	 */
-	public $colorName;
-
-	/**
-	 * @var StatusCategory
-	 */
-	protected $_statusCategory;
-
 	public static function get($data)
 	{
 		if (!isset($data['id'])) {
 			return null;
 		}
 
-
 		$id = $data['id'];
 
-
-		if (array_key_exists($id, self::$statuses)) {
-			$status = self::$statuses[$id];
+		if (array_key_exists($id, self::$priorities)) {
+			$priority = self::$priorities[$id];
 		}
 		else {
-			$status = self::populate($data);
-			self::$statuses[$status->id] = $status;
+			$priority = self::populate($data);
+			self::$priorities[$priority->id] = $priority;
 		}
 
 
-		return $status;
+		return $priority;
 	}
 
     /**
@@ -93,11 +74,8 @@ class Status extends Model
         $status = new self;
         $status->id = $data['id'];
         $status->name = $data['name'];
-        $status->description = $data['description'];
 	    $status->iconUrl = $data['iconUrl'];
 	    $status->self = $data['self'];
-	    $status->colorName = $data['colorName'];
-	    $status->_statusCategory = StatusCategory::get($data['statusCategory']);
 
         return $status;
     }
@@ -111,10 +89,5 @@ class Status extends Model
 
         return $statuses;
     }
-
-	public function getStatusCategory()
-	{
-		return $this->_statusCategory;
-	}
 
 }

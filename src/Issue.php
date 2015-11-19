@@ -46,9 +46,14 @@ class Issue extends Model
     public $description;
 
     /**
-     * @var string
+     * @var Status
      */
     public $status;
+
+	/**
+	 * @var Priority
+	 */
+	public $priority;
 
     /**
      * @var IssueType
@@ -112,6 +117,7 @@ class Issue extends Model
         $issue->_key = $data['key'];
 	    $issue->summary = $data['fields']['summary'];
 	    $issue->status = Status::get($data['fields']['status']);
+	    $issue->priority = Priority::get($data['fields']['priority']);
 	    $issue->description = $data['fields']['description'];
 	    $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
 	    $issue->components = ArrayHelper::index($data['fields']['components'], 'name');

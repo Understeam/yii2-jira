@@ -17,7 +17,7 @@ use yii\base\Model;
  */
 class StatusCategory extends Model
 {
-	private static $statusCategories;
+	private static $statusCategories = array();
 
 	/**
 	 * @var int

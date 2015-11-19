@@ -20,7 +20,7 @@ use yii\base\Model;
 class Status extends Model
 {
 
-	private static $statuses;
+	private static $statuses = array();
 
     /**
      * @var int
@@ -59,7 +59,10 @@ class Status extends Model
 			return null;
 		}
 
+
 		$id = $data['id'];
+
+
 		if (array_key_exists($id, self::$statuses)) {
 			$status = self::$statuses[$id];
 		}
@@ -67,6 +70,7 @@ class Status extends Model
 			$status = self::populate($data);
 			self::$statuses[$status->id] = $status;
 		}
+
 
 		return $status;
 	}

@@ -106,18 +106,19 @@ class Issue extends Model
         if (!is_array($data) || !isset($data['id'])) {
             return null;
         }
-        $issue = new self;
+	    $issue = new self;
         $issue->_project = $project;
         $issue->id = (int)$data['id'];
         $issue->_key = $data['key'];
 	    $issue->summary = $data['fields']['summary'];
 	    $issue->status = Status::get($data['fields']['status']);
-        $issue->description = $data['fields']['description'];
-        $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
-        $issue->components = ArrayHelper::index($data['fields']['components'], 'name');
-        $issue->created = strtotime($data['fields']['created']);
-        $issue->customFields = [];
-        foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
+	    $issue->description = $data['fields']['description'];
+	    $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
+	    $issue->components = ArrayHelper::index($data['fields']['components'], 'name');
+	    $issue->created = strtotime($data['fields']['created']);
+	    $issue->customFields = [];
+
+	    foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
             if (isset($data['fields']['customfield_' . $id])) {
                 $issue->customFields[$name] = $data['fields']['customfield_' . $id];
             }

@@ -70,6 +70,11 @@ class Issue extends Model
      */
     public $created;
 
+	/**
+	 * @var int
+	 */
+	public $timespent;
+
     /** @var array */
     public $customFields = [];
 

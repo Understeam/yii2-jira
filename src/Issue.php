@@ -126,6 +126,7 @@ class Issue extends Model
 	    $issue->description = $data['fields']['description'];
 	    $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
 	    $issue->components = ArrayHelper::index($data['fields']['components'], 'name');
+	    $issue->timespent = $data['fields']['timespent'];
 	    $issue->created = strtotime($data['fields']['created']);
 	    $issue->customFields = [];
 

@@ -76,6 +76,18 @@ class Client extends Component
 	public function request($method, $path, $body = [])
 	{
 		$url = $this->getUrlOfPath($path);
+
+		if (is_array($body) && !empty($body)) {
+			$body = Json::encode($body);
+		}
+
+		$cacheKey = md5($method . $url. $body);
+		$result = Yii::$app->cache->get($cacheKey);
+		if ($result !== false)
+		{
+			return $result;
+		}
+
 		try {
 			$result = $this->httpClient->request($url, $method, function (Event $event) use ($body) {
 					$request = $event->message;
@@ -85,9 +97,6 @@ class Client extends Component
 					$request->addHeader("Content-Type", "application/json");
 					if (!empty($body)) {
 						$stream = new BufferStream();
-						if (is_array($body)) {
-							$body = Json::encode($body);
-						}
 						$stream->write($body);
 						$request->setBody($stream);
 					}
@@ -95,6 +104,8 @@ class Client extends Component
 			if (is_string($result)) {
 				$result = Json::decode($result);
 			}
+			\Yii::trace($url, __CLASS__);
+
 		} catch (RequestException $e) {
 
 			$result = $e->getResponse()->getBody()->__toString();
@@ -104,7 +115,11 @@ class Client extends Component
 			{
 				$result = Json::decode($result);
 			}
+
+			\Yii::error($result, __CLASS__);
 		}
+
+		Yii::$app->cache->set($cacheKey, $result, 10);
 
 		return $result;
 	}

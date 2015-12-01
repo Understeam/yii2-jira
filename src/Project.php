@@ -135,6 +135,7 @@ class Project extends Model
     public function findIssueByCustomField($name, $value, $operator = "~")
     {
         $jql = "'{$name}' {$operator} '" . Client::escapeValue($value) . "'";
+
         return $this->findIssue($jql);
     }
 

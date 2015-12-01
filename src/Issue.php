@@ -46,9 +46,14 @@ class Issue extends Model
     public $description;
 
     /**
-     * @var string
+     * @var Status
      */
     public $status;
+
+    /**
+     * @var Priority
+     */
+    public $priority;
 
     /**
      * @var IssueType
@@ -64,6 +69,16 @@ class Issue extends Model
      * @var int
      */
     public $created;
+
+    /**
+     * @var int
+     */
+    public $timespent;
+
+    /**
+     * @var array
+     */
+    protected $_changelog;
 
     /** @var array */
     public $customFields = [];
@@ -99,9 +114,10 @@ class Issue extends Model
     /**
      * @param Project $project
      * @param array $data
+     * @param bool $loadCustomFields
      * @return Issue
      */
-    public static function populate(Project $project, $data)
+    public static function populate(Project $project, $data, $loadCustomFields = false)
     {
         if (!is_array($data) || !isset($data['id'])) {
             return null;
@@ -111,14 +127,20 @@ class Issue extends Model
         $issue->id = (int)$data['id'];
         $issue->_key = $data['key'];
         $issue->summary = $data['fields']['summary'];
+        $issue->status = Status::get($data['fields']['status']);
+        $issue->priority = Priority::get($data['fields']['priority']);
         $issue->description = $data['fields']['description'];
         $issue->issueType = $project->getIssueType($data['fields']['issuetype']['name']);
         $issue->components = ArrayHelper::index($data['fields']['components'], 'name');
+        $issue->timespent = $data['fields']['timespent'];
         $issue->created = strtotime($data['fields']['created']);
         $issue->customFields = [];
-        foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
-            if (isset($data['fields']['customfield_' . $id])) {
-                $issue->customFields[$name] = $data['fields']['customfield_' . $id];
+
+        if ($loadCustomFields) {
+            foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
+                if (isset($data['fields']['customfield_' . $id])) {
+                    $issue->customFields[$name] = $data['fields']['customfield_' . $id];
+                }
             }
         }
 
@@ -139,6 +161,62 @@ class Issue extends Model
     public function getKey()
     {
         return $this->_key;
+    }
+
+    public function getDuration()
+    {
+        if ($this->timespent === null) {
+            return null;
+        }
+
+        $seconds = $this->timespent;
+
+        $from = new \DateTime("@0");
+        $to = new \DateTime("@$seconds");
+
+        $diff = $from->diff($to);
+        $values = [
+            'd' => $diff->format('%a'),
+            'h' => $diff->format('%h'),
+            'm' => $diff->format('%i'),
+            's' => $diff->format('%s'),
+        ];
+
+        $duration = [];
+        $values = array_filter($values);
+        foreach ($values as $key => $value) {
+            $duration[] = $value . $key;
+        }
+
+        return implode(' ', $duration);
+    }
+
+    public function getLastChangelog()
+    {
+        $lastChangelog = null;
+
+        if (isset($this->changelog['histories'])) {
+            $history = end($this->changelog['histories']);
+            $item = end($history['items']);
+
+            $lastChangelog = $item['from'] . " -> " . $item['to'];
+        }
+
+        return $lastChangelog;
+    }
+
+    /**
+     * @return array
+     */
+    public function getChangelog()
+    {
+        if ($this->_changelog === null) {
+            $data = $this->project->client->get('issue/' . $this->key,
+                ['fields' => 'changelog', 'expand' => 'changelog']);
+            $this->_changelog = $data['changelog'];
+        }
+
+        return $this->_changelog;
     }
 
     public function save()
@@ -201,10 +279,11 @@ class Issue extends Model
             $fields['summary'] = $this->summary;
         }
         foreach ($this->issueType->getCustomFieldsMap() as $name => $id) {
-            if(isset($this->customFields[$name])) {
+            if (isset($this->customFields[$name])) {
                 $fields['customfield_' . $id] = $this->customFields[$name];
             }
         }
+
         return [
             'fields' => $fields,
         ];

@@ -114,9 +114,10 @@ class Issue extends Model
 	/**
 	 * @param Project $project
 	 * @param array $data
+	 * @param bool $loadCustomFields
 	 * @return Issue
 	 */
-	public static function populate(Project $project, $data)
+	public static function populate(Project $project, $data, $loadCustomFields = false)
 	{
 		if (!is_array($data) || !isset($data['id'])) {
 			return null;
@@ -135,9 +136,12 @@ class Issue extends Model
 		$issue->created = strtotime($data['fields']['created']);
 		$issue->customFields = [];
 
-		foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
-			if (isset($data['fields']['customfield_' . $id])) {
-				$issue->customFields[$name] = $data['fields']['customfield_' . $id];
+		if ($loadCustomFields)
+		{
+			foreach ($issue->issueType->getCustomFieldsMap() as $name => $id) {
+				if (isset($data['fields']['customfield_' . $id])) {
+					$issue->customFields[$name] = $data['fields']['customfield_' . $id];
+				}
 			}
 		}
 

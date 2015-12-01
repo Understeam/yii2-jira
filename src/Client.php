@@ -28,6 +28,8 @@ class Client extends Component
 
 	public $httpClientId = 'httpclient';
 
+	public $cacheDuration = 30;
+
 	public function getApiEndpointUrl()
 	{
 		return rtrim($this->jiraUrl, '/') . '/rest/api/2/';
@@ -119,7 +121,7 @@ class Client extends Component
 			\Yii::error($result, __CLASS__);
 		}
 
-		Yii::$app->cache->set($cacheKey, $result, 10);
+		Yii::$app->cache->set($cacheKey, $result, $this->cacheDuration);
 
 		return $result;
 	}

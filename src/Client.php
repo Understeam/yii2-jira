@@ -106,7 +106,7 @@ class Client extends Component
 			if (is_string($result)) {
 				$result = Json::decode($result);
 			}
-			\Yii::trace($url, __CLASS__);
+			\Yii::trace($url . "\n" . $body, __CLASS__);
 
 		} catch (RequestException $e) {
 

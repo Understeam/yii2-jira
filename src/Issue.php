@@ -74,6 +74,11 @@ class Issue extends Model
 	 * @var int
 	 */
 	public $timespent;
+	
+	/**
+	 * @var Issue
+	 */
+	public $parent;
 
 	/**
 	 * @var array
@@ -135,6 +140,10 @@ class Issue extends Model
 		$issue->timespent = $data['fields']['timespent'];
 		$issue->created = strtotime($data['fields']['created']);
 		$issue->customFields = [];
+		
+		if (isset($data['fields']['parent']) {
+			$issue->parent = self::populate($project, $data['fields']['parent']);
+		}
 
 		if ($loadCustomFields)
 		{

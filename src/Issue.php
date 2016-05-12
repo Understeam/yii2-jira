@@ -141,8 +141,8 @@ class Issue extends Model
 		$issue->created = strtotime($data['fields']['created']);
 		$issue->customFields = [];
 		
-		if (isset($data['fields']['parent']) {
-			$issue->parent = self::populate($project, $data['fields']['parent']);
+		if (isset($data['fields']['parent'])) {
+			$issue->parent = self::populate($project, $data['fields']['parent'], $loadCustomFields);
 		}
 
 		if ($loadCustomFields)

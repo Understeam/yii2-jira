@@ -39,6 +39,7 @@ class User extends Model
         $user->name = $data['name'];
         $user->displayName = $data['displayName'];
         $user->email = $data['emailAddress'];
+
         return $user;
     }
 }

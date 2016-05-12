@@ -20,7 +20,7 @@ use yii\base\Model;
 class Status extends Model
 {
 
-	private static $statuses = array();
+    private static $statuses = array();
 
     /**
      * @var int
@@ -42,43 +42,42 @@ class Status extends Model
      */
     public $iconUrl;
 
-	/**
-	 * Rest url to the status
-	 * @var string
-	 */
-	public $self;
+    /**
+     * Rest url to the status
+     * @var string
+     */
+    public $self;
 
-	/**
-	 * @var string
-	 */
-	public $colorName;
+    /**
+     * @var string
+     */
+    public $colorName;
 
-	/**
-	 * @var StatusCategory
-	 */
-	protected $_statusCategory;
+    /**
+     * @var StatusCategory
+     */
+    protected $_statusCategory;
 
-	public static function get($data)
-	{
-		if (!isset($data['id'])) {
-			return null;
-		}
-
-
-		$id = $data['id'];
+    public static function get($data)
+    {
+        if (!isset($data['id'])) {
+            return null;
+        }
 
 
-		if (array_key_exists($id, self::$statuses)) {
-			$status = self::$statuses[$id];
-		}
-		else {
-			$status = self::populate($data);
-			self::$statuses[$status->id] = $status;
-		}
+        $id = $data['id'];
 
 
-		return $status;
-	}
+        if (array_key_exists($id, self::$statuses)) {
+            $status = self::$statuses[$id];
+        } else {
+            $status = self::populate($data);
+            self::$statuses[$status->id] = $status;
+        }
+
+
+        return $status;
+    }
 
     /**
      * @param array $data
@@ -94,27 +93,27 @@ class Status extends Model
         $status->id = $data['id'];
         $status->name = $data['name'];
         $status->description = $data['description'];
-	    $status->iconUrl = $data['iconUrl'];
-	    $status->self = $data['self'];
-	    $status->colorName = $data['colorName'];
-	    $status->_statusCategory = StatusCategory::get($data['statusCategory']);
+        $status->iconUrl = $data['iconUrl'];
+        $status->self = $data['self'];
+        $status->colorName = $data['colorName'];
+        $status->_statusCategory = StatusCategory::get($data['statusCategory']);
 
         return $status;
     }
 
     public static function populateAll($data)
     {
-	    $statuses = [];
+        $statuses = [];
         foreach ($data as $row) {
-	        $statuses[$row['name']] = self::populate($row);
+            $statuses[$row['name']] = self::populate($row);
         }
 
         return $statuses;
     }
 
-	public function getStatusCategory()
-	{
-		return $this->_statusCategory;
-	}
+    public function getStatusCategory()
+    {
+        return $this->_statusCategory;
+    }
 
 }

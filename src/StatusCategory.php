@@ -17,56 +17,55 @@ use yii\base\Model;
  */
 class StatusCategory extends Model
 {
-	private static $statusCategories = array();
+    private static $statusCategories = array();
 
-	/**
-	 * @var int
-	 */
-	public $id;
+    /**
+     * @var int
+     */
+    public $id;
 
-	/**
-	 * @var string
-	 */
-	public $key;
+    /**
+     * @var string
+     */
+    public $key;
 
-	/**
-	 * @var string
-	 */
-	public $name;
+    /**
+     * @var string
+     */
+    public $name;
 
-	/**
-	 * @var string
-	 */
-	public $colorName;
+    /**
+     * @var string
+     */
+    public $colorName;
 
-	/**
-	 * Rest url to the status
-	 * @var string
-	 */
-	public $self;
+    /**
+     * Rest url to the status
+     * @var string
+     */
+    public $self;
 
-	/**
-	 * @var StatusCategory
-	 */
-	protected $_statusCategory;
+    /**
+     * @var StatusCategory
+     */
+    protected $_statusCategory;
 
-	public static function get($data)
-	{
-		if (!isset($data['id'])) {
-			return null;
-		}
+    public static function get($data)
+    {
+        if (!isset($data['id'])) {
+            return null;
+        }
 
-		$id = $data['id'];
-		if (array_key_exists($id, self::$statusCategories)) {
-			$statusCategory = self::$statusCategories[$id];
-		}
-		else {
-			$statusCategory = self::populate($data);
-			self::$statusCategories[$statusCategory->id] = $statusCategory;
-		}
+        $id = $data['id'];
+        if (array_key_exists($id, self::$statusCategories)) {
+            $statusCategory = self::$statusCategories[$id];
+        } else {
+            $statusCategory = self::populate($data);
+            self::$statusCategories[$statusCategory->id] = $statusCategory;
+        }
 
-		return $statusCategory;
-	}
+        return $statusCategory;
+    }
 
     /**
      * @param array $data
@@ -79,10 +78,10 @@ class StatusCategory extends Model
         }
         $statusCategory = new self;
         $statusCategory->id = $data['id'];
-	    $statusCategory->key = $data['key'];
-	    $statusCategory->name = $data['name'];
-	    $statusCategory->colorName = $data['colorName'];
-	    $statusCategory->self = $data['self'];
+        $statusCategory->key = $data['key'];
+        $statusCategory->name = $data['name'];
+        $statusCategory->colorName = $data['colorName'];
+        $statusCategory->self = $data['self'];
 
         return $statusCategory;
     }

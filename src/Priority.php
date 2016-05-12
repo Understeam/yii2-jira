@@ -18,7 +18,7 @@ use yii\base\Model;
 class Priority extends Model
 {
 
-	private static $priorities = array();
+    private static $priorities = array();
 
     /**
      * @var int
@@ -35,31 +35,30 @@ class Priority extends Model
      */
     public $iconUrl;
 
-	/**
-	 * Rest url to the status
-	 * @var string
-	 */
-	public $self;
+    /**
+     * Rest url to the status
+     * @var string
+     */
+    public $self;
 
-	public static function get($data)
-	{
-		if (!isset($data['id'])) {
-			return null;
-		}
+    public static function get($data)
+    {
+        if (!isset($data['id'])) {
+            return null;
+        }
 
-		$id = $data['id'];
+        $id = $data['id'];
 
-		if (array_key_exists($id, self::$priorities)) {
-			$priority = self::$priorities[$id];
-		}
-		else {
-			$priority = self::populate($data);
-			self::$priorities[$priority->id] = $priority;
-		}
+        if (array_key_exists($id, self::$priorities)) {
+            $priority = self::$priorities[$id];
+        } else {
+            $priority = self::populate($data);
+            self::$priorities[$priority->id] = $priority;
+        }
 
 
-		return $priority;
-	}
+        return $priority;
+    }
 
     /**
      * @param array $data
@@ -74,17 +73,17 @@ class Priority extends Model
         $status = new self;
         $status->id = $data['id'];
         $status->name = $data['name'];
-	    $status->iconUrl = $data['iconUrl'];
-	    $status->self = $data['self'];
+        $status->iconUrl = $data['iconUrl'];
+        $status->self = $data['self'];
 
         return $status;
     }
 
     public static function populateAll($data)
     {
-	    $statuses = [];
+        $statuses = [];
         foreach ($data as $row) {
-	        $statuses[$row['name']] = self::populate($row);
+            $statuses[$row['name']] = self::populate($row);
         }
 
         return $statuses;

@@ -40,6 +40,11 @@ class Project extends Model
      */
     public $components;
 
+    /**
+     * @var string
+     */
+    public $projectTypeKey;
+
     /** @var Client */
     protected $_client;
 
@@ -60,6 +65,7 @@ class Project extends Model
         $project->name = $data['name'];
         $project->issueTypes = IssueType::populateAll($project, $data['issueTypes']);
         $project->components = ArrayHelper::index($data['components'], 'name');
+        $project->projectTypeKey = $data['projectTypeKey'];
 
         return $project;
     }

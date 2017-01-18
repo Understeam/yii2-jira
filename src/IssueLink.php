@@ -2,6 +2,8 @@
 
 namespace understeam\jira;
 
+use yii\base\Model;
+
 class IssueLink extends Model
 {
 	/**
@@ -43,15 +45,14 @@ class IssueLink extends Model
 		if (!is_array($data) || !isset($data['id'])) {
 			return null;
 		}
-
-		$this->_project = $project;
-
+		
 		$status = new self;
 		$status->id = $data['id'];
 		$status->self = $data['self'];
 		$status->_type = $data['type'];
 		$status->_inwardIssue = $data['inwardIssue'];
 		$status->_outwardIssue = $data['outwardIssue '];
+		$status->_project = $project;
 
 		return $status;
 	}

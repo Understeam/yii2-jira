@@ -2,6 +2,8 @@
 
 namespace understeam\jira;
 
+use yii\base\Model;
+
 class IssueLinkType extends Model
 {
 	/**

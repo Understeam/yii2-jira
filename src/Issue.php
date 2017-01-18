@@ -187,7 +187,7 @@ class Issue extends Model
 	}
 
 	/**
-	 *
+	 * @return IssueLink[]
 	 */
 	public function getIssueLinks()
 	{

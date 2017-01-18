@@ -45,7 +45,7 @@ class IssueLink extends Model
 		if (!is_array($data) || !isset($data['id'])) {
 			return null;
 		}
-		
+
 		$status = new self;
 		$status->id = $data['id'];
 		$status->self = $data['self'];
@@ -65,6 +65,18 @@ class IssueLink extends Model
 		}
 
 		return $statuses;
+	}
+
+	/**
+	 * @return IssueLinkType
+	 */
+	public function getType()
+	{
+		if (!($this->_type instanceof IssueLinkType)) {
+			$this->_type = IssueLinkType::populate($this->_type);
+		}
+
+		return $this->_type;
 	}
 
 	/**

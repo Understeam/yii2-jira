@@ -70,6 +70,16 @@ class Project extends Model
         return $project;
     }
 
+	public static function populateAll(Client $client, $data)
+	{
+		$projects = [];
+		foreach ($data as $row) {
+			$projects[$row['id']] = self::populate($client, $row);
+		}
+
+		return $projects;
+	}
+
     public function getMetaData($issueTypeName)
     {
         $data = $this->client->get('issue/createmeta',

@@ -31,6 +31,16 @@ class Issue extends Model
 	protected $_project;
 
 	/**
+	 * @var array
+	 */
+	protected $_issueLinksRaw;
+
+	/**
+	 * @var array
+	 */
+	protected $_issueLinks;
+
+	/**
 	 * @var User
 	 */
 	public $reporter;
@@ -131,6 +141,9 @@ class Issue extends Model
 		$issue->_project = $project;
 		$issue->id = (int)$data['id'];
 		$issue->_key = $data['key'];
+
+		$issue->_issueLinksRaw = $data['fields']['issuelinks'];
+
 		$issue->summary = $data['fields']['summary'];
 		$issue->status = Status::get($data['fields']['status']);
 		$issue->priority = Priority::get($data['fields']['priority']);
@@ -171,6 +184,23 @@ class Issue extends Model
 	public function getKey()
 	{
 		return $this->_key;
+	}
+
+	/**
+	 * @return IssueLink[]
+	 */
+	public function getIssueLinks()
+	{
+		if ($this->_issueLinks === null)
+		{
+			$this->_issueLinks = [];
+
+			foreach ($this->_issueLinksRaw as $issueLinkRaw) {
+				$this->_issueLinks[] = IssueLink::populate($this->_project, $issueLinkRaw);
+			}
+		}
+
+		return $this->_issueLinks;
 	}
 
 	public function getDuration()

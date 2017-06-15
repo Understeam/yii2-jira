@@ -45,9 +45,9 @@ class Project extends Model
      */
     public $projectTypeKey;
 
-	/**
-	 * @var string
-	 */
+    /**
+     * @var string
+     */
     public $projectCategory;
 
     /** @var Client */

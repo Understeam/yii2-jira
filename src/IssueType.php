@@ -89,16 +89,27 @@ class IssueType extends Model
             'projectKeys' => $this->project->key,
         ]);
         $this->_customFields = [];
-        if (isset($metaData['projects'][0]['issuetypes'][0]['fields'])) {
-            $fields = $metaData['projects'][0]['issuetypes'][0]['fields'];
-            foreach ($fields as $name => $config) {
-                if (strpos($name, 'customfield_') !== 0) {
-                    continue;
-                }
-                $id = substr($name, 12);
-                $this->_customFields[$id] = $config;
-                $this->_customFieldsMap[$config['name']] = $id;
+
+        $issueTypes = $metaData['projects'][0]['issuetypes'];
+            foreach ($issueTypes as $issueType) {
+
+            if ($issueType['id'] != $this->id) {
+                continue;
             }
+
+            if (isset($issueType['fields'])) {
+                $fields = $issueType['fields'];
+
+                foreach ($fields as $name => $config) {
+                    if (strpos($name, 'customfield_') !== 0) {
+                        continue;
+                    }
+                    $id = substr($name, 12);
+                    $this->_customFields[$id] = $config;
+                    $this->_customFieldsMap[$config['name']] = $id;
+                }
+            }
+
         }
 
         return $this->_customFields;

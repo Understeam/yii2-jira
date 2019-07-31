@@ -91,7 +91,7 @@ class Client extends Component
 		}
 
 		try {
-			$result = $this->httpClient->request($url, $method, function (Event $event) use ($body) {
+			$result = $this->httpClient->request($method, $url, function (Event $event) use ($body) {
 					$request = $event->message;
 					$authString = base64_encode($this->username . ':' . $this->password);
 					$request->addHeader("Authorization", "Basic " . $authString);

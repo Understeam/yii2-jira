@@ -112,7 +112,7 @@ class Client extends Component
 
 			$result = $e->getResponse()->getBody()->__toString();
 
-			$contentType = $e->getResponse()->getHeader('Content-Type');
+			$contentType = $e->getResponse()->getHeader('Content-Type')[0];
 			if (strpos($contentType, 'application/json') !== false)
 			{
 				$result = Json::decode($result);
